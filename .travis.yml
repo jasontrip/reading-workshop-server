@@ -1,0 +1,11 @@
+language: node_js
+node_js: node
+services:
+- mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: Dh9fPKkofGb5211cm0xlrzxG4YDf9seAXMwVi9fxd1wJxpNKvAAP7qmbLhgC17rNAMLLT9dOPMa/iYHC2bqsdH6O6rhpf0ozHLmJDnRJWQs/qhEfIbgcoz1kz+pJX9w3iLYUcCUCM8n7wtc1JlxZIF5u7lhRZjGaeDIzzck8Yz83d2RvC3m7AlE0UUdeXkyAoG7BIl5tS4yzlhyj74n9wmvyw6p6wnQa9ErdbnLKRR9KqOVyTsFzG4BT6V8JM0l+CnirzkoD4MOjt6ZSYL5UceOM895N6kKc+VSNqHlFr+igf3xMc8K9s0DL8qpnb4RqUjlf2hCspaKCsI23CkSYNR5Hf3yoo987dZL/iXtgyw5Z5+5sXh+o9IriLzIQR92TZVgtKNXNJQfQE5qC7goeNzqG57jn567K2JhAD2oetW+sUanQen69hXEer5qvGGmX//2j14hRjuddyukYJfpj+t/Yg4EEdzLwZq5BWRWcXEW1P5M9KRa1K4tFQfhkdJxohvHP1/ihBqmi0DxVP92RlycCQ5QMcvpACTp4hBeBdU53VLTKh7RfTUFKWWcQgysWRFUj0lZk8/GbdAAiD4Sq1h3+6NlzbK/mq38BK/+7qhzTSdYpjkGkLlbxv8zcuqkZPm6O0ZVb6xVfvGoi8LHSd8+o83xZMSGLgOfEBN0qm70=
+  app: reading-workshop
+  on:
+    repo: jasontrip/reading-workshop-server
