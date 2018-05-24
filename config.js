@@ -1,1 +1,1 @@
-CLIENT_ORIGIN=https://reading-workshop-client.netlify.com/
+exports.CLIENT_ORIGIN = 'https://reading-workshop-client.netlify.com/'
