@@ -1,29 +1,149 @@
 const chai = require('chai');
 const chaitHttp = require('chai-http');
 const mongoose = require('mongoose');
+const User = require('../models/user.model');
+const { runServer, closeServer, app } = require('../server');
+const { TEST_DATABASE_URL } = require('../config');
+const {
+  describe,
+  it,
+  before,
+  afterEach,
+  after,
+} = require('mocha');
+
 mongoose.Promise = global.Promise;
 
-const {runServer, closeServer, app} = require('../server');
-const {TEST_DATABASE_URL} = require('../config');
+chai.should();
+const expect = chai.expect;
 
-const should = chai.should();
 chai.use(chaitHttp);
 
-describe('API', function() {
-	before(function() {
-		return runServer(TEST_DATABASE_URL);
-	});
+function tearDownDb() {
+  console.warn('Deleting database');
+  return mongoose.connection.dropDatabase();
+}
 
-	after(function() {
-		return closeServer();
-	});
+describe('/users endpoint', function testUsers() {
+  describe('POST', function testPost() {
+    before(() => runServer(TEST_DATABASE_URL));
+    afterEach(() => tearDownDb());
+    after(() => closeServer());
 
-	it('should return 200 on GET from /api', function() {
-		return chai.request(app)
-			.get('/api/testing')
-			.then(function(res) {
-				res.should.have.status(200);
-				res.should.be.json;
-			});
-	});
+    it('should add a new user, and not a duplicate', function() {
+      const testUser = {
+        username: 'testUser',
+        password: '12345678910',
+        firstName: 'Test',
+        lastName: 'McTest'
+      };
+      return chai.request(app)
+        .post('/api/users')
+        .send(testUser)
+      .then(function(res) {
+        expect(res).status(201);
+        expect(res).json;
+        expect(res.body).include.keys(
+          'username', 'firstName', 'lastName')
+        return User.findOne({username: res.body.username});
+      })
+      .then(function(user) {
+        expect(user.username).to.equal(testUser.username);
+        expect(user.firstName).to.equal(testUser.firstName);
+        expect(user.lastName).to.equal(testUser.lastName);
+        return user.validatePassword(testUser.password);
+      })
+      .then(function(isValid) {
+        expect(isValid).to.be.true;
+        return chai.request(app)
+          .post('/api/users')
+          .send(testUser);
+      })
+      .then(function(res) {
+        expect(res).to.have.status(422);
+      });
+    });
+
+    it('should deny a request with a missing username', function() {
+      const testUser = {
+        password: '12345678910',
+        firstName: 'Test',
+        lastName: 'McTest',
+      };
+
+      return chai.request(app)
+        .post('/api/users')
+        .send(testUser)
+        .then(function(res) {
+          expect(res).to.have.status(422);
+          expect(res.body.message).to.equal('Missing field: username');
+        });
+    });
+
+    it('should deny a request with a missing password', function() {
+      const testUser = {
+        username: 'testUser',
+        firstName: 'Test',
+        lastName: 'McTest',
+      };
+
+      return chai.request(app)
+        .post('/api/users')
+        .send(testUser)
+        .then(function(res) {
+          expect(res).to.have.status(422);
+          expect(res.body.message).to.equal('Missing field: password');
+        });
+    });
+
+    it('should deny a request with a space in the username', function() {
+      const testUser = {
+        username: 'testUser ',
+        password: '12345678910',
+        firstName: 'Test',
+        lastName: 'McTest'
+      };
+
+      return chai.request(app)
+        .post('/api/users')
+        .send(testUser)
+        .then(function(res) {
+          expect(res).status(422);
+          expect(res).json;
+          expect(res.body.message).equal('username cannot start or end with whitespace.');
+        });
+    });
+
+    it('should deny a request with a space in the password', function() {
+      const testUser = {
+        username: 'testUser',
+        password: '12345678910 ',
+        firstName: 'Test',
+        lastName: 'McTest'
+      }
+
+      return chai.request(app)
+        .post('/api/users')
+        .send(testUser)
+        .then(function(res) {
+          expect(res).status(422);
+          expect(res).json;
+          expect(res.body.message).equal('password cannot start or end with whitespace.');
+        });
+    });
+  });
+});
+
+describe('API', function testAPI() {
+  before(() => runServer(TEST_DATABASE_URL));
+  after(() => closeServer());
+
+  it('should return 200 on GET from /api', function() {
+    return chai.request(app)
+      .get('/api/testing')
+      .then(function(res) {
+        res.should.have.status(200);
+        res.should.be.json;
+      });
+  });
 });

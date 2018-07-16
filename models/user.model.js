@@ -1,18 +1,37 @@
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 
 const UserSchema = mongoose.Schema({
-	username: {type: String, required: true, unique: true},
-	password: {type: String, required: true},
-	firstName: {type: String, default: ''},
-	lastName: {type: String, default: ''}
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  firstName: { type: String, default: '' },
+  lastName: { type: String, default: '' },
+  roster: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
+  workshops: [{
+    sessionId: { type: Number, required: true, unique: true },
+    date: { type: Date, required: true },
+    book: { type: String },
+    pages: { type: String },
+    notes: { type: String },
+    students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
+  }],
 });
 
-UserSchema.methods.serialize = () => {
-	return {
-		username: this.username,
-		firstName: this.firstName,
-		lastName: this.lastName
-	}
-}
+UserSchema.methods.serialize = function serialize() {
+  return {
+    username: this.username,
+    firstName: this.firstName,
+    lastName: this.lastName,
+    roster: this.roster,
+    workshops: this.workshops,
+  };
+};
 
-module.exports = mongoose.model('User', UserSchema);
+UserSchema.methods.validatePassword = function validatePassword(password) {
+  return bcrypt.compare(password, this.password);
+};
+
+UserSchema.statics.hashPassword = password => bcrypt.hash(password, 10);
+
+const User = mongoose.model('User', UserSchema);
+module.exports = User;
