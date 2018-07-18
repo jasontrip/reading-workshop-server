@@ -15,11 +15,13 @@ const addStudentToRoster = (req, res) => {
     return res.status(422).json(error);
   }
 
-  Student.create(req.body)
-    .then((student) => {
-      User.findOneAndUpdate({ username }, { $push: { roster: student._id } })
-        .then(() => res.json(student));
+  let student;
+  return Student.create(req.body)
+    .then((_student) => {
+      student = _student;
+      return User.findOneAndUpdate({ username }, { $push: { roster: student._id } });
     })
+    .then(() => res.json(student))
     .catch(err => res.status(400).send(err));
 };
 
@@ -38,10 +40,9 @@ const deleteStudentFromRoster = (req, res) => {
 
   return User.findOneAndUpdate(
     { username },
-    { $pull: { roster: { _id } } },
-    { new: true },
+    { $pull: { roster: _id } },
   )
-    .then(() => res.status(200).send())
+    .then(() => res.status(204).send())
     .catch(err => res.status(400).send(err));
 };
 

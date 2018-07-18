@@ -19,7 +19,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
       if (!isValid) {
         throw loginError;
       }
-      return done(null, user);
+      return done(null, user.serialize());
     })
     .catch((err) => {
       if (err.reason === 'LoginError') {
