@@ -1,20 +1,28 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const passport = require('passport');
 
 const app = express();
 mongoose.Promise = global.Promise;
 
 const usersRouter = require('./routers/users.router');
+const authRouter = require('./routers/auth.router');
 const rosterRouter = require('./routers/roster.router');
 const workshopsRouter = require('./routers/workshops.router');
 const { CLIENT_ORIGIN, PORT, DATABASE_URL } = require('./config');
+const { localStrategy, jwtStrategy } = require('./strategies');
+
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 app.use(cors({ origin: CLIENT_ORIGIN }));
 app.use(bodyParser.json());
 
 app.use('/api/users', usersRouter);
+app.use('/auth', authRouter);
 app.use('/api/roster', rosterRouter);
 app.use('/api/workshops', workshopsRouter);
 

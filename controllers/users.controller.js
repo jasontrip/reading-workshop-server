@@ -1,7 +1,7 @@
 const validateRequest = require('../utility/validate');
 const User = require('../models/user.model');
 
-exports.getUser = (req, res) => {
+const getUser = (req, res) => {
   const username = 'jason';
   return User.findOne({ username })
     .then((user) => {
@@ -10,7 +10,7 @@ exports.getUser = (req, res) => {
 };
 
 
-exports.addUser = (req, res) => {
+const addUser = (req, res) => {
   const validationRules = {
     requiredFields: ['username', 'password'],
     stringFields: ['username', 'password', 'firstName', 'lastName'],
@@ -41,12 +41,13 @@ exports.addUser = (req, res) => {
     .count()
     .then((count) => {
       if (count > 0) {
-        return Promise.reject({
+        const validationError = {
           code: 422,
           reason: 'ValidationError',
           message: 'Username already taken',
-          location: 'username'
-        });
+          location: 'username',
+        };
+        throw validationError;
       }
       return User.hashPassword(password);
     })
@@ -61,6 +62,9 @@ exports.addUser = (req, res) => {
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
       }
+      console.log(err);
       return res.status(500).json({ code: 500, message: 'Internal server error' });
     });
 };
+
+module.exports = { getUser, addUser };
