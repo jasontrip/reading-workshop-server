@@ -34,7 +34,7 @@ const addStudentToRoster = (req, res) => {
     });
 };
 
-const deleteStudentFromRoster = (req, res) => {
+const removeStudentFromRoster = (req, res) => {
   const username = 'jason';
 
   const validationRules = {
@@ -55,4 +55,4 @@ const deleteStudentFromRoster = (req, res) => {
     .catch(() => res.status(500).json({ code: 500, message: 'Internal server error' }));
 };
 
-module.exports = { addStudentToRoster, deleteStudentFromRoster };
+module.exports = { addStudentToRoster, removeStudentFromRoster };

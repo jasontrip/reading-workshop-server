@@ -43,8 +43,8 @@ const addStudentToWorkshop = (req, res) => {
   const username = 'jason';
 
   const validationRules = {
-    requiredFields: ['firstName', 'lastName'],
-    stringFields: ['firstName', 'lastName'],
+    requiredFields: ['workshopId', 'studentId' ],
+    stringFields: ['workshopId', 'studentId'],
   };
   const message = validateRequest(req.body, validationRules);
   if (message) {
@@ -55,25 +55,26 @@ const addStudentToWorkshop = (req, res) => {
     });
   }
 
-  const { firstName, lastName } = req.body;
+  const { workshopId, studentId } = req.body;
 
   return User.findOne(
     { username },
-    { roster: 1 },
+    { workshops: 1 },
   )
     .then((user) => {
-      user.roster.push({ firstName, lastName });
+      const workshop = user.workshops.find(w => w._id.equals(workshopId));
+      workshop.students.push(studentId);
       return user.save();
     })
     .then(() => res.status(200).send())
     .catch(err => res.status(400).send(err));
 };
 
-const deleteStudentFromWorkshop = (req, res) => {
+const removeStudentFromWorkshop = (req, res) => {
   const username = 'jason';
 
   const validationRules = {
-    requiredFields: ['_id'],
+    requiredFields: ['workshopId', 'studentId'],
   };
   const message = validateRequest(req.body, validationRules);
   if (message) {
@@ -84,19 +85,23 @@ const deleteStudentFromWorkshop = (req, res) => {
     });
   }
 
-  const { _id } = req.body;
+  const { workshopId, studentId } = req.body;
 
-  return User.findOneAndUpdate(
+  return User.findOne(
     { username },
-    { $pull: { roster: { _id } } },
-    { new: true },
+    { workshops: 1 },
   )
-    .then(() => res.status(200).send())
+    .then((user) => {
+      const workshop = user.workshops.find(w => w._id.equals(workshopId));
+      workshop.students.pull(studentId);
+      return user.save();
+    })
+    .then(() => res.status(204).send())
     .catch(err => res.status(400).send(err));
 };
 
 module.exports = {
   addWorkshop,
   addStudentToWorkshop,
-  deleteStudentFromWorkshop,
+  removeStudentFromWorkshop,
 };
