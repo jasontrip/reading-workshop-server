@@ -1,5 +1,5 @@
 const validateRequest = require('../utility/validate');
-const User = require('../models/user.model');
+const { User, Workshop } = require('../models/user.model');
 
 const addWorkshop = (req, res) => {
   const username = 'jason';
@@ -18,26 +18,25 @@ const addWorkshop = (req, res) => {
   }
 
   const {
-    sessionId,
-    date,
-    book,
-    pages,
-    notes,
+    date, book, pages, notes,
   } = req.body;
+  let user;
+  let workshop;
 
-  // User.find({ username })
-  //   .then((user) => {
-  //     if (!sessionId) {
-  //       user.workshops.push({
-  //         date,
-  //         book,
-  //         pages,
-  //         notes,
-  //       });
-  //     }
-  //   });
-
-  return res.send(date + book + pages + notes);
+  return User.findOne({ username })
+    .then((_user) => {
+      user = _user;
+      return Workshop.create({
+        date, book, pages, notes,
+      });
+    })
+    .then((_workshop) => {
+      workshop = _workshop;
+      user.workshops.push(workshop);
+      return user.save();
+    })
+    .then(() => res.status(200).json(workshop))
+    .catch(err => res.json(err));
 };
 
 const addStudentToWorkshop = (req, res) => {

@@ -1,7 +1,7 @@
 const chai = require('chai');
 const chaitHttp = require('chai-http');
 const mongoose = require('mongoose');
-const User = require('../models/user.model');
+const { User } = require('../models/user.model');
 const { runServer, closeServer, app } = require('../server');
 const { TEST_DATABASE_URL } = require('../config');
 const {
