@@ -8,6 +8,7 @@ const passport = require('passport');
 const app = express();
 mongoose.Promise = global.Promise;
 
+const studentsRouter = require('./routers/students.router');
 const usersRouter = require('./routers/users.router');
 const authRouter = require('./routers/auth.router');
 const rosterRouter = require('./routers/roster.router');
@@ -23,6 +24,7 @@ app.use(bodyParser.json());
 
 app.use('/api/users', usersRouter);
 app.use('/auth', authRouter);
+app.use('/api/students', studentsRouter);
 app.use('/api/roster', rosterRouter);
 app.use('/api/workshops', workshopsRouter);
 
