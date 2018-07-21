@@ -43,7 +43,7 @@ const addStudentToWorkshop = (req, res) => {
   const username = 'jason';
 
   const validationRules = {
-    requiredFields: ['workshopId', 'studentId' ],
+    requiredFields: ['workshopId', 'studentId'],
     stringFields: ['workshopId', 'studentId'],
   };
   const message = validateRequest(req.body, validationRules);
@@ -57,17 +57,20 @@ const addStudentToWorkshop = (req, res) => {
 
   const { workshopId, studentId } = req.body;
 
-  return User.findOne(
-    { username },
-    { workshops: 1 },
-  )
-    .then((user) => {
-      const workshop = user.workshops.find(w => w._id.equals(workshopId));
-      workshop.students.push(studentId);
-      return user.save();
-    })
-    .then(() => res.status(200).send())
+  const query = {
+    username,
+    'workshops._id': workshopId,
+  };
+  const update = {
+    $addToSet: {
+      'workshops.$.students': studentId,
+    },
+  };
+  User.findOneAndUpdate(query, update, { new: true })
+    .then(user => res.status(200).json(user))
     .catch(err => res.status(400).send(err));
+
+  return undefined;
 };
 
 const removeStudentFromWorkshop = (req, res) => {
@@ -86,18 +89,21 @@ const removeStudentFromWorkshop = (req, res) => {
   }
 
   const { workshopId, studentId } = req.body;
+  const query = {
+    username,
+    'workshops._id': workshopId,
+  };
+  const update = {
+    $pull: {
+      'workshops.$.students': studentId,
+    },
+  };
 
-  return User.findOne(
-    { username },
-    { workshops: 1 },
-  )
-    .then((user) => {
-      const workshop = user.workshops.find(w => w._id.equals(workshopId));
-      workshop.students.pull(studentId);
-      return user.save();
-    })
+  User.findOneAndUpdate(query, update, { new: true })
     .then(() => res.status(204).send())
     .catch(err => res.status(400).send(err));
+
+  return undefined;
 };
 
 module.exports = {
