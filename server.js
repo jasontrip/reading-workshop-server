@@ -23,7 +23,7 @@ app.use(cors({ origin: CLIENT_ORIGIN }));
 app.use(bodyParser.json());
 
 app.use('/api/users', usersRouter);
-app.use('/auth', authRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/students', studentsRouter);
 app.use('/api/roster', rosterRouter);
 app.use('/api/workshops', workshopsRouter);
