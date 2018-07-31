@@ -2,7 +2,7 @@ const validateRequest = require('../utility/validate');
 const { User } = require('../models/user.model');
 
 const getUser = (req, res) => {
-  const username = 'jason';
+  const { username } = req.user;
   return User.findOne({ username })
     .then((user) => {
       res.json(user.serialize());

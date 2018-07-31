@@ -1,6 +1,12 @@
 const validateRequest = require('../utility/validate');
 const { User, Workshop } = require('../models/user.model');
 
+// User.findOneAndUpdate({ username: "jason" },
+//     { workshops: { $pull: { "book": "Other Book" } } },
+//     { new: true }
+//   )
+//   .then(user => console.log(user));
+
 const addWorkshop = (req, res) => {
   const username = 'jason';
 

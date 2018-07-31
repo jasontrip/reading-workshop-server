@@ -10,7 +10,8 @@ const createAuthToken = user => jwt.sign({ user }, JWT_SECRET, {
 
 const login = (req, res) => {
   const { user } = req;
-  const authToken = createAuthToken(user);
+  const { username } = user;
+  const authToken = createAuthToken({ username });
   res.json({
     authToken,
     user,
@@ -18,7 +19,8 @@ const login = (req, res) => {
 };
 
 const refresh = (req, res) => {
-  const authToken = createAuthToken(req.user);
+  const { username } = req.user;
+  const authToken = createAuthToken({ username });
   res.json({ authToken });
 };
 
