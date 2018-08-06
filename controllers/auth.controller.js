@@ -24,4 +24,4 @@ const refresh = (req, res) => {
   res.json({ authToken });
 };
 
-module.exports = { login, refresh };
+module.exports = { createAuthToken, login, refresh };

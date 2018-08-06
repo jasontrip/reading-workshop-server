@@ -1,5 +1,6 @@
 const validateRequest = require('../utility/validate');
 const { User } = require('../models/user.model');
+const { createAuthToken } = require('./auth.controller');
 
 const getUser = (req, res) => {
   const { username } = req.user;
@@ -10,7 +11,7 @@ const getUser = (req, res) => {
 };
 
 
-const addUser = (req, res) => {
+const addUser = (req, res) => { 
   const validationRules = {
     requiredFields: ['username', 'password'],
     stringFields: ['username', 'password', 'firstName', 'lastName'],
@@ -44,8 +45,8 @@ const addUser = (req, res) => {
         const validationError = {
           code: 422,
           reason: 'ValidationError',
-          message: 'Username already taken',
-          location: 'username',
+          _error: 'Username already taken',
+          username: 'Username already taken',
         };
         throw validationError;
       }
@@ -57,12 +58,17 @@ const addUser = (req, res) => {
       lastName,
       password: hash,
     }))
-    .then(user => res.status(201).json(user.serialize()))
+    .then((user) => {
+      res.status(201).json({
+        authToken: createAuthToken({ username: user.username }),
+        user: user.serialize(),
+      });
+    })
     .catch((err) => {
+      console.log(err);
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
       }
-      console.log(err);
       return res.status(500).json({ code: 500, message: 'Internal server error' });
     });
 };

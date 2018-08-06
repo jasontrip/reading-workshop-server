@@ -6,7 +6,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 const localStrategy = new LocalStrategy((username, password, done) => {
   let user;
-  const loginError = { reason: 'LoginError', message: 'Incorrect username or password' };
+  const loginError = {
+    reason: 'LoginError',
+    username: 'Incorrect username or password',
+  };
   User.findOne({ username })
     .then((_user) => {
       user = _user;

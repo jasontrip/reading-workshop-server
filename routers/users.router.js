@@ -4,7 +4,7 @@ const controller = require('../controllers/users.controller');
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
-router.post('/', jwtAuth, controller.addUser);
+router.post('/', controller.addUser);
 router.get('/', jwtAuth, controller.getUser);
 
 module.exports = router;
