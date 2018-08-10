@@ -4,14 +4,13 @@ const { createAuthToken } = require('./auth.controller');
 
 const getUser = (req, res) => {
   const { username } = req.user;
-  return User.findOne({ username })
+  return User.findOne({ username }).populate('workshops.students').exec()
     .then((user) => {
       res.json(user.serialize());
     });
 };
 
-
-const addUser = (req, res) => { 
+const addUser = (req, res) => {
   const validationRules = {
     requiredFields: ['username', 'password'],
     stringFields: ['username', 'password', 'firstName', 'lastName'],
