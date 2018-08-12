@@ -10,7 +10,10 @@ const localStrategy = new LocalStrategy((username, password, done) => {
     reason: 'LoginError',
     username: 'Incorrect username or password',
   };
-  User.findOne({ username }).populate('workshops.students').exec()
+  User.findOne({ username })
+    .populate('workshops.students')
+    .populate('students')
+    .exec()
     .then((_user) => {
       user = _user;
       if (!user) {

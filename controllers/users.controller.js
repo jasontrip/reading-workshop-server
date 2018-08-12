@@ -4,7 +4,9 @@ const { createAuthToken } = require('./auth.controller');
 
 const getUser = (req, res) => {
   const { username } = req.user;
-  return User.findOne({ username }).populate('workshops.students').exec()
+  return User.findOne({ username })
+    .populate('students')
+    .exec()
     .then((user) => {
       res.json(user.serialize());
     });
@@ -64,7 +66,6 @@ const addUser = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err);
       if (err.reason === 'ValidationError') {
         return res.status(err.code).json(err);
       }

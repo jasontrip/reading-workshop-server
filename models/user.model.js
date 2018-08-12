@@ -14,7 +14,7 @@ const UserSchema = mongoose.Schema({
   password: { type: String, required: true },
   firstName: { type: String, default: '' },
   lastName: { type: String, default: '' },
-  roster: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
+  students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
   workshops: [WorkshopSchema],
 });
 
@@ -23,7 +23,7 @@ UserSchema.methods.serialize = function serialize() {
     username: this.username,
     firstName: this.firstName,
     lastName: this.lastName,
-    roster: this.roster,
+    students: this.students,
     workshops: this.workshops,
   };
 };
