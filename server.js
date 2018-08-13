@@ -11,7 +11,6 @@ mongoose.Promise = global.Promise;
 const studentsRouter = require('./routers/students.router');
 const usersRouter = require('./routers/users.router');
 const authRouter = require('./routers/auth.router');
-const rosterRouter = require('./routers/roster.router');
 const workshopsRouter = require('./routers/workshops.router');
 const { CLIENT_ORIGIN, PORT, DATABASE_URL } = require('./config');
 const { localStrategy, jwtStrategy } = require('./strategies');
@@ -25,7 +24,6 @@ app.use(bodyParser.json());
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/students', studentsRouter);
-app.use('/api/roster', rosterRouter);
 app.use('/api/workshops', workshopsRouter);
 
 app.get('/api/*', (req, res) => {

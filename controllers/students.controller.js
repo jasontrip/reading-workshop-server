@@ -1,5 +1,6 @@
 const validateRequest = require('../utility/validate');
-const Student = require('../models/student.model');
+const { User } = require('../models/user.model');
+const { internalServerError } = require('../utility/errors');
 
 
 const addStudent = (req, res) => {
@@ -12,9 +13,15 @@ const addStudent = (req, res) => {
     return res.status(422).json(error);
   }
 
-  return Student.create(req.body)
-    .then(student => res.status(201).json(student))
-    .catch(err => res.status(400).send(err));
+  const { username } = req.user;
+  const { firstName, lastName } = req.body;
+  const newStudent = { firstName, lastName };
+
+  User.findOneAndUpdate({ username }, { $push: { students: newStudent } }, { new: true })
+    .then(user => res.status(200).json(user.students[user.students.length - 1]))
+    .catch(() => res.json(internalServerError));
+
+  return undefined;
 };
 
 const deleteStudent = (req, res) => {
@@ -26,9 +33,14 @@ const deleteStudent = (req, res) => {
     return res.status(422).json(error);
   }
 
-  return Student.deleteOne({ _id: req.body._id })
-    .then(student => res.status(204).json(student))
-    .catch(err => res.status(400).send(err));
+  const { username } = req.user;
+  const { _id } = req.body;
+
+  User.findOneAndUpdate({ username }, { $pull: { students: { _id } } })
+    .then(() => res.status(204).send())
+    .catch(() => res.status(500).send(internalServerError));
+
+  return undefined;
 };
 
 module.exports = { addStudent, deleteStudent };

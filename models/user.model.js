@@ -9,12 +9,17 @@ const WorkshopSchema = mongoose.Schema({
   students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
 });
 
+const StudentSchema = mongoose.Schema({
+  firstName: { type: String },
+  lastName: { type: String },
+});
+
 const UserSchema = mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   firstName: { type: String, default: '' },
   lastName: { type: String, default: '' },
-  students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
+  students: [StudentSchema],
   workshops: [WorkshopSchema],
 });
 
@@ -36,5 +41,6 @@ UserSchema.statics.hashPassword = password => bcrypt.hash(password, 10);
 
 const User = mongoose.model('User', UserSchema);
 const Workshop = mongoose.model('Workshop', WorkshopSchema);
-module.exports = { User, Workshop };
+const Student = mongoose.model('Student', StudentSchema);
+module.exports = { User, Workshop, Student };
 

@@ -1,7 +1,10 @@
 const router = require('express').Router();
+const passport = require('passport');
 const controller = require('../controllers/students.controller');
 
-router.post('/', controller.addStudent);
-router.delete('/', controller.deleteStudent);
+const jwtAuth = passport.authenticate('jwt', { session: false });
+
+router.post('/', jwtAuth, controller.addStudent);
+router.delete('/', jwtAuth, controller.deleteStudent);
 
 module.exports = router;
