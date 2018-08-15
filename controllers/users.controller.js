@@ -6,8 +6,6 @@ const { createAuthToken } = require('./auth.controller');
 const getUser = (req, res) => {
   const { username } = req.user;
   return User.findOne({ username })
-    .populate('students')
-    .populate('workshops.students').exec()
     .then(user => res.json(user.serialize()))
     .catch(() => res.status(500).json(internalServerError));
 };

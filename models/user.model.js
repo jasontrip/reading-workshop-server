@@ -19,8 +19,8 @@ const UserSchema = mongoose.Schema({
   password: { type: String, required: true },
   firstName: { type: String, default: '' },
   lastName: { type: String, default: '' },
-  students: [StudentSchema],
-  workshops: [WorkshopSchema],
+  students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
+  workshops: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workshop' }],
 });
 
 UserSchema.methods.serialize = function serialize() {
@@ -38,6 +38,14 @@ UserSchema.methods.validatePassword = function validatePassword(password) {
 };
 
 UserSchema.statics.hashPassword = password => bcrypt.hash(password, 10);
+
+function prePopulate() {
+  this.populate('students');
+  this.populate('workshops');
+  this.populate('workshops.students');
+}
+UserSchema.pre('findOne', prePopulate);
+UserSchema.pre('find', prePopulate);
 
 const User = mongoose.model('User', UserSchema);
 const Workshop = mongoose.model('Workshop', WorkshopSchema);
