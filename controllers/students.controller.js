@@ -43,7 +43,6 @@ const updateStudent = (req, res) => {
     return res.status(422).json(error);
   }
 
-  const { username } = req.user;
   const { _id, firstName, lastName } = req.body;
   const updatedStudent = { _id, firstName, lastName };
 
@@ -67,10 +66,9 @@ const deleteStudent = (req, res) => {
     return res.status(422).json(error);
   }
 
-  const { username } = req.user;
   const { _id } = req.body;
 
-  User.findOneAndUpdate({ username }, { $pull: { students: { _id } } })
+  Student.findOneAndDelete({ _id })
     .then(() => res.status(204).send())
     .catch(() => res.status(500).send(internalServerError));
 
