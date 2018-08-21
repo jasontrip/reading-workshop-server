@@ -25,10 +25,7 @@ const addStudent = (req, res) => {
       return User.findOneAndUpdate({ username }, { $push: { students: student._id } });
     })
     .then(() => res.status(201).json(student))
-    .catch((err) => {
-      console.log(err);
-      res.json(internalServerError);
-    });
+    .catch(() => res.json(internalServerError));
 
   return undefined;
 };

@@ -33,7 +33,7 @@ const addWorkshop = (req, res) => {
     })
     .then((_workshop) => {
       workshop = _workshop;
-      user.workshops.push(workshop);
+      user.workshops.push(workshop._id);
       return user.save();
     })
     .then(() => res.status(200).json(workshop))
@@ -42,16 +42,53 @@ const addWorkshop = (req, res) => {
   return undefined;
 };
 
-const deleteWorkshop = (req, res) => {
-  const { username } = req.user;
-
+const updateWorkshop = (req, res) => {
   const validationRules = {
-    requiredFields: ['workshopId'],
-    stringFields: ['workshopId']
+    requiredFields: ['_id', 'date', 'book', 'pages', 'notes'],
+    stringFields: ['_id', 'firstName', 'lastName', 'book', 'pages', 'notes'],
+  };
+  const error = validateRequest(req.body, validationRules);
+  if (error) {
+    return res.status(422).json(error);
+  }
+
+  const {
+    _id, date, book, pages, notes,
+  } = req.body;
+
+  const updatedWorkshop = {
+    _id, date, book, pages, notes,
   };
 
-  
+  Workshop.findOneAndUpdate(
+    { _id },
+    { $set: updatedWorkshop },
+    { new: true },
+  )
+    .then(workshop => res.status(200).json(workshop))
+    .catch(() => res.json(internalServerError));
 
+  return undefined;
+};
+
+const deleteWorkshop = (req, res) => {
+  const { username } = req.user;
+  const validationRules = {
+    requiredFields: ['_id'],
+    stringFields: ['_id'],
+  };
+  const error = validateRequest(req.body, validationRules);
+  if (error) {
+    return res.status(422).json(error);
+  }
+
+  const { _id } = req.body;
+  User.findOneAndUpdate({ username }, { $pull: { workshops: _id } })
+    .then(() => Workshop.findOneAndDelete({ _id }))
+    .then(() => res.status(204).send())
+    .catch(() => res.status(500).send(internalServerError));
+
+  return undefined;
 };
 
 const addStudentToWorkshop = (req, res) => {
@@ -123,6 +160,8 @@ const removeStudentFromWorkshop = (req, res) => {
 
 module.exports = {
   addWorkshop,
+  updateWorkshop,
+  deleteWorkshop,
   addStudentToWorkshop,
   removeStudentFromWorkshop,
 };
