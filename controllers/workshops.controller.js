@@ -64,7 +64,7 @@ const updateWorkshop = (req, res) => {
     { _id },
     { $set: updatedWorkshop },
     { new: true },
-  )
+  ).populate('students')
     .then(workshop => res.status(200).json(workshop))
     .catch(() => res.json(internalServerError));
 
