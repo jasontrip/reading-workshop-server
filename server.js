@@ -18,7 +18,7 @@ const { localStrategy, jwtStrategy } = require('./strategies');
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
-app.use(cors({ origin: CLIENT_ORIGIN }));
+app.use(cors());
 app.use(bodyParser.json());
 
 app.options('*', cors({ origin: CLIENT_ORIGIN }));
