@@ -39,13 +39,12 @@ UserSchema.methods.validatePassword = function validatePassword(password) {
 
 UserSchema.statics.hashPassword = password => bcrypt.hash(password, 10);
 
-function prePopulate() {
+function prePopulateUser() {
   this.populate('students');
-  this.populate('workshops');
-  this.populate('workshops.students');
+  this.populate({ path: 'workshops', populate: { path: 'students' } });
 }
-UserSchema.pre('findOne', prePopulate);
-UserSchema.pre('find', prePopulate);
+UserSchema.pre('findOne', prePopulateUser);
+UserSchema.pre('find', prePopulateUser);
 
 const User = mongoose.model('User', UserSchema);
 const Workshop = mongoose.model('Workshop', WorkshopSchema);

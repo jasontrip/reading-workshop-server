@@ -19,7 +19,7 @@ const addWorkshop = (req, res) => {
   }
 
   const {
-    date, book, pages, notes,
+    date, book, pages, notes, students,
   } = req.body;
   let user;
   let workshop;
@@ -28,7 +28,7 @@ const addWorkshop = (req, res) => {
     .then((_user) => {
       user = _user;
       return Workshop.create({
-        date, book, pages, notes,
+        date, book, pages, notes, students,
       });
     })
     .then((_workshop) => {
@@ -53,11 +53,11 @@ const updateWorkshop = (req, res) => {
   }
 
   const {
-    _id, date, book, pages, notes,
+    _id, date, book, pages, notes, students,
   } = req.body;
 
   const updatedWorkshop = {
-    _id, date, book, pages, notes,
+    _id, date, book, pages, notes, students,
   };
 
   Workshop.findOneAndUpdate(
