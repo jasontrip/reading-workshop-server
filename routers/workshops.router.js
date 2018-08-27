@@ -8,7 +8,4 @@ router.post('/', jwtAuth, controller.addWorkshop);
 router.put('/', jwtAuth, controller.updateWorkshop);
 router.delete('/', jwtAuth, controller.deleteWorkshop);
 
-router.post('/students', jwtAuth, controller.addStudentToWorkshop);
-router.delete('/students', jwtAuth, controller.removeStudentFromWorkshop);
-
 module.exports = router;

@@ -45,7 +45,6 @@ module.exports = (data, validateFields) => {
         : `Must be no more than ${sizedFields[tooLargeField]
           .max} characters long`;
       const x = error(message, tooSmallField || tooLargeField);
-      console.log(x);
       return x;
     }
   }
