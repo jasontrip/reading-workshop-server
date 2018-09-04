@@ -30,7 +30,10 @@ const addWorkshop = (req, res) => {
     })
     .then(() => Workshop.populate(workshop, { path: 'students' }))
     .then(_workshop => res.status(200).json(_workshop))
-    .catch(() => res.status(500).json(internalServerError));
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(internalServerError);
+    });
 
   return undefined;
 };
