@@ -1,6 +1,5 @@
 # Readers Workshop Server
-[link to live client app](https://reading-workshop-client.netlify.com/) <br />
-[link to client repo](https://github.com/jasontrip/reading-workshop-client)
+Thanks for checking out my repo. Live app view is no longer supported...I built this in 2018 and I stopped paying to keep it up.
 
 ## Summary
 This is the server side app that hosts a RESTful API so that a user can keep track of readers
